@@ -37,7 +37,7 @@ export function Base64EncoderDecoderContent() {
       setErrorText("")
     } catch (e) {
       setOutputText("")
-      setErrorText(`Error ${mode === "encode" ? "encoding" : "decoding"}: Invalid input`)
+      setErrorText(`错误 ${mode === "encode" ? "编码" : "解码"}: 无效输入`)
     }
   }, [mode, selectedEmoji, inputText])
 
@@ -57,22 +57,22 @@ export function Base64EncoderDecoderContent() {
 
   return (
     <CardContent className="space-y-4">
-      <p>This tool allows you to encode a hidden message into an emoji or alphabet letter. You can copy and paste text with a hidden message in it to decode the message.</p>
+      <p>这款工具可以将隐藏信息编码到表情符号或字母中。你可以复制和粘贴包含隐藏信息的文本来解码信息。</p>
 
       <div className="flex items-center justify-center space-x-2">
-        <Label htmlFor="mode-toggle">Decode</Label>
+        <Label htmlFor="mode-toggle">解码</Label>
         <Switch id="mode-toggle" checked={isEncoding} onCheckedChange={handleModeToggle} />
-        <Label htmlFor="mode-toggle">Encode</Label>
+        <Label htmlFor="mode-toggle">编码</Label>
       </div>
 
       <Textarea
-        placeholder={isEncoding ? "Enter text to encode" : "Paste an emoji to decode"}
+        placeholder={isEncoding ? "输入要编码的文本" : "粘贴要解码的表情符号"}
         value={inputText}
         onChange={(e) => setInputText(e.target.value)}
         className="min-h-[100px]"
       />
 
-      <div className="font-bold text-sm">Pick an emoji</div>
+      <div className="font-bold text-sm">选择一个表情符号</div>
       <EmojiSelector
         onEmojiSelect={setSelectedEmoji}
         selectedEmoji={selectedEmoji}
@@ -80,7 +80,7 @@ export function Base64EncoderDecoderContent() {
         disabled={!isEncoding}
       />
 
-      <div className="font-bold text-sm">Or pick a standard alphabet letter</div>
+      <div className="font-bold text-sm">或选择一个标准字母</div>
       <EmojiSelector
         onEmojiSelect={setSelectedEmoji}
         selectedEmoji={selectedEmoji}
@@ -89,7 +89,7 @@ export function Base64EncoderDecoderContent() {
       />
 
       <Textarea
-        placeholder={`${isEncoding ? "Encoded" : "Decoded"} output`}
+        placeholder={`${isEncoding ? "编码" : "解码"}输出`}
         value={outputText}
         readOnly
         className="min-h-[100px]"
