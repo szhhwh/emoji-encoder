@@ -28,13 +28,16 @@ export function fromVariationSelector(codePoint: number): number | null {
     }
 }
 
-export function encode(emoji: string, text: string): string {
+export function encode(emoji: string, text: string, customSymbol: string): string {
     // convert the string to utf-8 bytes
     const bytes = new TextEncoder().encode(text)
     let encoded = emoji
 
+    // Use custom symbol as fallback if provided
+    const fallbackSymbol = customSymbol.length > 0 ? customSymbol : emoji
+
     for (const byte of bytes) {
-        encoded += toVariationSelector(byte)
+        encoded += toVariationSelector(byte) || fallbackSymbol
     }
 
     return encoded

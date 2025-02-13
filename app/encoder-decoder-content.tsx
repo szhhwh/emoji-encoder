@@ -8,16 +8,18 @@ import { Switch } from "@/components/ui/switch"
 import { Label } from "@/components/ui/label"
 import { decode, encode } from "./encoding"
 import { EmojiSelector } from "@/components/emoji-selector"
-import { ALPHABET_LIST, EMOJI_LIST } from "./emoji"
+import { EMOJI_LIST } from "./emoji"
 
 export function Base64EncoderDecoderContent() {
   const router = useRouter()
   const searchParams = useSearchParams()
 
   // Read mode from URL parameters, other state stored locally
-  const mode = searchParams.get("mode") || "encode"
+  const mode = searchParams.get("mode") || "decode"
   const [inputText, setInputText] = useState("")
   const [selectedEmoji, setSelectedEmoji] = useState("😀")
+  const [customSymbol, setCustomSymbol] = useState("")
+  const [emojiList, setEmojiList] = useState(EMOJI_LIST)
   const [outputText, setOutputText] = useState("")
   const [errorText, setErrorText] = useState("")
 
@@ -32,14 +34,14 @@ export function Base64EncoderDecoderContent() {
   useEffect(() => {
     try {
       const isEncoding = mode === "encode"
-      const output = isEncoding ? encode(selectedEmoji, inputText) : decode(inputText)
+      const output = isEncoding ? encode(selectedEmoji, inputText, customSymbol) : decode(inputText)
       setOutputText(output)
       setErrorText("")
     } catch (e) {
       setOutputText("")
       setErrorText(`错误 ${mode === "encode" ? "编码" : "解码"}: 无效输入`)
     }
-  }, [mode, selectedEmoji, inputText])
+  }, [mode, selectedEmoji, customSymbol, inputText])
 
   const handleModeToggle = (checked: boolean) => {
     updateMode(checked ? "encode" : "decode")
@@ -57,39 +59,34 @@ export function Base64EncoderDecoderContent() {
 
   return (
     <CardContent className="space-y-4">
-      <p>这款工具可以将隐藏信息编码到表情符号或字母中。你可以复制和粘贴包含隐藏信息的文本来解码信息。</p>
 
       <div className="flex items-center justify-center space-x-2">
-        <Label htmlFor="mode-toggle">解码</Label>
+        <Label htmlFor="mode-toggle">解密</Label>
         <Switch id="mode-toggle" checked={isEncoding} onCheckedChange={handleModeToggle} />
-        <Label htmlFor="mode-toggle">编码</Label>
+        <Label htmlFor="mode-toggle">加密</Label>
       </div>
 
       <Textarea
-        placeholder={isEncoding ? "输入要编码的文本" : "粘贴要解码的表情符号"}
+        placeholder={isEncoding ? "输入要加密的文本" : "输入要解密的emoji"}
         value={inputText}
         onChange={(e) => setInputText(e.target.value)}
         className="min-h-[100px]"
       />
 
-      <div className="font-bold text-sm">选择一个表情符号</div>
+      <div className="font-bold text-sm">选择一个emoji</div>
       <EmojiSelector
         onEmojiSelect={setSelectedEmoji}
+        onCustomSymbolSubmit={(symbol) => {
+          setCustomSymbol(symbol)
+          setEmojiList([...emojiList, symbol])
+        }}
         selectedEmoji={selectedEmoji}
-        emojiList={EMOJI_LIST}
-        disabled={!isEncoding}
-      />
-
-      <div className="font-bold text-sm">或选择一个标准字母</div>
-      <EmojiSelector
-        onEmojiSelect={setSelectedEmoji}
-        selectedEmoji={selectedEmoji}
-        emojiList={ALPHABET_LIST}
+        emojiList={emojiList}
         disabled={!isEncoding}
       />
 
       <Textarea
-        placeholder={`${isEncoding ? "编码" : "解码"}输出`}
+        placeholder={`${isEncoding ? "加密" : "解密"}输出`}
         value={outputText}
         readOnly
         className="min-h-[100px]"
